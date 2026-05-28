@@ -33,6 +33,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: message })
                 });
+                
                 const data = await response.json();
                 
                 // Accessing the reply from the Gemini API response structure
@@ -47,4 +48,3 @@
     </script>
 </body>
 </html>
- 
