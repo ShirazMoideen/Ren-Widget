@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; background: transparent; }
+        #chat-container { border: 2px solid #FFC0CB; border-radius: 10px; width: 280px; padding: 15px; background-color: #000; color: #fff; }
+        #chat-output { height: 150px; overflow-y: auto; margin-bottom: 10px; font-size: 14px; border-bottom: 1px solid #333; }
+        #user-input { width: 70%; color: #000; padding: 5px; }
+        #send-btn { padding: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div style="font-weight: bold; margin-bottom: 10px;">Ren - Assistant</div>
+        <div id="chat-output"></div>
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        document.getElementById('send-btn').addEventListener('click', async function() {
+            const input = document.getElementById('user-input');
+            const output = document.getElementById('chat-output');
+            const message = input.value;
+            if (!message) return;
+
+            output.innerHTML += `<p><b>You:</b> ${message}</p>`;
+            input.value = '';
+
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbyvicfeRjMLET9cJBakWuk0NkM-fih3k0GF5Jmob3ws6wOXgwGASqVgYFbKI00_GTsH/exec', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                const data = await response.json();
+                
+                // Accessing the reply from the Gemini API response structure
+                const reply = data.candidates[0].content.parts[0].text;
+                output.innerHTML += `<p><b>Ren:</b> ${reply}</p>`;
+                output.scrollTop = output.scrollHeight;
+            } catch (err) {
+                output.innerHTML += `<p style="color:red;">Error: Connection failed. Check Console.</p>`;
+                console.error("Chat Error:", err);
+            }
+        });
+    </script>
+</body>
+</html>
